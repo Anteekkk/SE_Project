@@ -1,16 +1,17 @@
 import express from "express";
 const router=express.Router();
+import {admin} from "../controllers/admincont.js";
+
 import pg from "pg";
-import {checkinv} from "../controllers/checkinventory.js";
 const app = express();
 const port = 3000;
 const db = new pg.Client({
   user: "postgres",
   host: "localhost",
-  database: "world",
+  database: "cfg",
   password: "antrikshj_09",
   port: 5432,
 });
 db.connect();
-router.post("/checkinventory",checkinv);
+router.get("/",admin);
 export default router;

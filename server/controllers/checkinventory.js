@@ -1,7 +1,16 @@
 
+import pg from "pg";
+const db = new pg.Client({
+    user: "postgres",
+    host: "localhost",
+    database: "cfg",
+    password: "antrikshj_09",
+    port: 5432,
+  });
+  db.connect();
 async function checkMinimum(ratio,total) {
     const result = await db.query("SELECT special_req_min FROM inventory");
-    const current = await db.query("SELECT current_storage FROM inventory");
+    const current = await db.query("SELECT avail_storage FROM inventory");
     const max = await db.query("SELECT max_storage FROM inventory");
     
     if(ratio>=result && current<max && total+current<max){
@@ -12,20 +21,20 @@ async function checkMinimum(ratio,total) {
     }
   }
 export const checkinv= async (req,res)=>{
-    const total=req.body.total;
-      const special=req.body.special;
+    const total=req.body.quantity;
+      const special=req.body.specialRequestQuantity;
       const ratio=special/total;
-      const min= checkMinimum(ratio,total);
+      const min= await checkMinimum(ratio,total);
       if(min===true){
-        res.render("/appointment");
+        res.json({isAvailable:true});
       }
       else{
-        res.render("/reminder");
+        res.json({isAvailable:false});
       }
 
 }
 
 
-module.exports={
-    checkinv,
-}
+// module.exports={
+//     checkinv,
+// }
